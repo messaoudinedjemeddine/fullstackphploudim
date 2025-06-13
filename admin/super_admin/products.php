@@ -14,8 +14,8 @@ if (!Auth::check() || !Auth::checkRole('super_admin')) {
     redirect('/admin/index.php');
 }
 
-// Initialize ProductController
-$productController = new ProductController();
+// Initialize ProductController using singleton pattern
+$productController = ProductController::getInstance();
 
 // Handle product deletion
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_product_id'])) {
@@ -49,7 +49,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
         
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2"><?= $pageTitle ?></h1>
+                <h1 class="h2"><?= __('manage_products') ?></h1>
                 <a href="product_form.php" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i><?= __('add_new_product') ?>
                 </a>
@@ -62,7 +62,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
                 </div>
                 <?php unset($_SESSION['flash_message']); ?>
             <?php endif; ?>
-
+            
             <div class="card shadow mb-4">
                 <div class="card-body">
                     <div class="table-responsive">
@@ -81,59 +81,65 @@ require_once __DIR__ . '/../includes/admin_header.php';
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($products as $product): ?>
+                                <?php if (empty($products)): ?>
                                     <tr>
-                                        <td><?= $product['id'] ?></td>
-                                        <td>
-                                            <?php if (!empty($product['image'])): ?>
-                                                <img src="<?= htmlspecialchars($product['image']) ?>" 
-                                                     alt="<?= htmlspecialchars($product['name']) ?>" 
-                                                     class="img-thumbnail" 
-                                                     style="max-width: 50px;">
-                                            <?php else: ?>
-                                                <div class="bg-light text-center" style="width: 50px; height: 50px;">
-                                                    <i class="fas fa-image text-muted"></i>
-                                                </div>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td><?= htmlspecialchars($product['name']) ?></td>
-                                        <td><?= htmlspecialchars($product['category_name']) ?></td>
-                                        <td><?= number_format($product['price'], 2) ?></td>
-                                        <td>
-                                            <?php if ($product['discount_price']): ?>
-                                                <?= number_format($product['discount_price'], 2) ?>
-                                            <?php else: ?>
-                                                -
-                                            <?php endif; ?>
-                                        </td>
-                                        <td><?= htmlspecialchars($product['sku']) ?></td>
-                                        <td>
-                                            <span class="badge bg-<?= $product['is_active'] ? 'success' : 'danger' ?>">
-                                                <?= $product['is_active'] ? __('active') : __('inactive') ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a href="product_form.php?id=<?= $product['id'] ?>" 
-                                                   class="btn btn-sm btn-primary" 
-                                                   title="<?= __('edit') ?>">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="product_sizes.php?id=<?= $product['id'] ?>" 
-                                                   class="btn btn-sm btn-info" 
-                                                   title="<?= __('manage_sizes') ?>">
-                                                    <i class="fas fa-ruler"></i>
-                                                </a>
-                                                <button type="button" 
-                                                        class="btn btn-sm btn-danger" 
-                                                        onclick="confirmDelete(<?= $product['id'] ?>)" 
-                                                        title="<?= __('delete') ?>">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
+                                        <td colspan="9" class="text-center"><?= __('no_products_found') ?></td>
                                     </tr>
-                                <?php endforeach; ?>
+                                <?php else: ?>
+                                    <?php foreach ($products as $product): ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($product['id']) ?></td>
+                                            <td>
+                                                <?php if (!empty($product['image_path'])): ?>
+                                                    <img src="<?= BASE_URL . $product['image_path'] ?>" 
+                                                         alt="<?= htmlspecialchars($product['name_en']) ?>" 
+                                                         class="img-thumbnail" 
+                                                         style="width: 50px; height: 50px; object-fit: cover;">
+                                                <?php else: ?>
+                                                    <div class="bg-light text-center" style="width: 50px; height: 50px;">
+                                                        <i class="fas fa-image text-muted"></i>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><?= htmlspecialchars($product['name_en']) ?></td>
+                                            <td><?= htmlspecialchars($product['category_name'] ?? '-') ?></td>
+                                            <td><?= number_format($product['price'], 2) ?></td>
+                                            <td>
+                                                <?php if (!empty($product['discount_price'])): ?>
+                                                    <?= number_format($product['discount_price'], 2) ?>
+                                                <?php else: ?>
+                                                    -
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><?= htmlspecialchars($product['sku']) ?></td>
+                                            <td>
+                                                <span class="badge bg-<?= $product['is_active'] ? 'success' : 'danger' ?>">
+                                                    <?= $product['is_active'] ? __('active') : __('inactive') ?>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <a href="product_form.php?id=<?= $product['id'] ?>" 
+                                                       class="btn btn-sm btn-primary" 
+                                                       title="<?= __('edit') ?>">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a href="product_sizes.php?id=<?= $product['id'] ?>" 
+                                                       class="btn btn-sm btn-info" 
+                                                       title="<?= __('manage_sizes') ?>">
+                                                        <i class="fas fa-ruler"></i>
+                                                    </a>
+                                                    <button type="button" 
+                                                            class="btn btn-sm btn-danger" 
+                                                            onclick="confirmDelete(<?= $product['id'] ?>)" 
+                                                            title="<?= __('delete') ?>">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -143,36 +149,22 @@ require_once __DIR__ . '/../includes/admin_header.php';
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><?= __('confirm_delete') ?></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <?= __('delete_product_confirmation') ?>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <?= __('cancel') ?>
-                </button>
-                <form method="POST" id="deleteForm">
-                    <input type="hidden" name="delete_product_id" id="deleteProductId">
-                    <button type="submit" class="btn btn-danger">
-                        <?= __('delete') ?>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
 function confirmDelete(productId) {
-    document.getElementById('deleteProductId').value = productId;
-    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    if (confirm('<?= __('confirm_delete_product') ?>')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'products.php';
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'delete_product_id';
+        input.value = productId;
+        
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
 }
 </script>
 

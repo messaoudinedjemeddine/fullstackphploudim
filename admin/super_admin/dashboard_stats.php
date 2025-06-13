@@ -15,8 +15,8 @@ if (!Auth::check() || !Auth::checkRole('super_admin')) {
     redirect('/admin/index.php');
 }
 
-// Initialize OrderController
-$orderController = new OrderController();
+// Initialize OrderController using singleton pattern
+$orderController = OrderController::getInstance();
 
 // Get statistics data
 $stats = $orderController->getStatistics();

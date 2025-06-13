@@ -8,7 +8,7 @@ use App\Auth;
             <!-- Dashboard Link - Always Visible -->
             <li class="nav-item">
                 <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'index.php' ? 'active' : '' ?>" 
-                   href="index.php">
+                   href="<?php echo BASE_URL; ?>admin/index.php">
                     <i class="fas fa-tachometer-alt me-2"></i>
                     <?= __('dashboard') ?>
                 </a>
@@ -18,42 +18,42 @@ use App\Auth;
                 <!-- Super Admin Navigation -->
                 <li class="nav-item">
                     <a class="nav-link <?= strpos($_SERVER['PHP_SELF'], 'super_admin/products.php') !== false ? 'active' : '' ?>" 
-                       href="super_admin/products.php">
+                       href="<?php echo BASE_URL; ?>admin/super_admin/products.php">
                         <i class="fas fa-box me-2"></i>
                         <?= __('manage_products') ?>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?= strpos($_SERVER['PHP_SELF'], 'super_admin/categories.php') !== false ? 'active' : '' ?>" 
-                       href="super_admin/categories.php">
+                       href="<?php echo BASE_URL; ?>admin/super_admin/categories.php">
                         <i class="fas fa-tags me-2"></i>
                         <?= __('manage_categories') ?>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?= strpos($_SERVER['PHP_SELF'], 'super_admin/coupons.php') !== false ? 'active' : '' ?>" 
-                       href="super_admin/coupons.php">
+                       href="<?php echo BASE_URL; ?>admin/super_admin/coupons.php">
                         <i class="fas fa-ticket-alt me-2"></i>
                         <?= __('manage_coupons') ?>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?= strpos($_SERVER['PHP_SELF'], 'super_admin/users.php') !== false ? 'active' : '' ?>" 
-                       href="super_admin/users.php">
+                       href="<?php echo BASE_URL; ?>admin/super_admin/users.php">
                         <i class="fas fa-users me-2"></i>
                         <?= __('manage_users') ?>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?= strpos($_SERVER['PHP_SELF'], 'super_admin/delivery_cities.php') !== false ? 'active' : '' ?>" 
-                       href="super_admin/delivery_cities.php">
+                       href="<?php echo BASE_URL; ?>admin/super_admin/delivery_cities.php">
                         <i class="fas fa-truck me-2"></i>
                         <?= __('manage_delivery') ?>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?= strpos($_SERVER['PHP_SELF'], 'super_admin/dashboard_stats.php') !== false ? 'active' : '' ?>" 
-                       href="super_admin/dashboard_stats.php">
+                       href="<?php echo BASE_URL; ?>admin/super_admin/dashboard_stats.php">
                         <i class="fas fa-chart-bar me-2"></i>
                         <?= __('statistics') ?>
                     </a>
@@ -64,7 +64,7 @@ use App\Auth;
                 <!-- Call Center Agent Navigation -->
                 <li class="nav-item">
                     <a class="nav-link <?= strpos($_SERVER['PHP_SELF'], 'call_center/orders.php') !== false ? 'active' : '' ?>" 
-                       href="call_center/orders.php">
+                       href="<?php echo BASE_URL; ?>admin/call_center/orders.php">
                         <i class="fas fa-phone-alt me-2"></i>
                         <?= __('view_new_orders') ?>
                     </a>
@@ -75,7 +75,7 @@ use App\Auth;
                 <!-- Delivery Agent Navigation -->
                 <li class="nav-item">
                     <a class="nav-link <?= strpos($_SERVER['PHP_SELF'], 'delivery/orders.php') !== false ? 'active' : '' ?>" 
-                       href="delivery/orders.php">
+                       href="<?php echo BASE_URL; ?>admin/delivery/orders.php">
                         <i class="fas fa-shipping-fast me-2"></i>
                         <?= __('view_confirmed_orders') ?>
                     </a>
@@ -84,7 +84,7 @@ use App\Auth;
         </ul>
         <ul class="nav flex-column mt-4">
             <li class="nav-item">
-                <a class="nav-link" href="auth/logout.php">
+                <a class="nav-link" href="<?php echo BASE_URL; ?>admin/auth/logout.php">
                     <i class="fas fa-sign-out-alt me-2"></i>
                     <?= __('logout') ?>
                 </a>
