@@ -30,8 +30,18 @@
         </div>
     </footer>
     
+    <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="<?php echo BASE_URL; ?>public/js/main.js"></script>
+    <script>
+        // Initialize all dropdowns
+        document.addEventListener('DOMContentLoaded', function() {
+            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+            var dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl);
+            });
+        });
+    </script>
 </body>
 </html>

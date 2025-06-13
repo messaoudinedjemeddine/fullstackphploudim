@@ -1,5 +1,7 @@
 <?php
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 require_once __DIR__ . '/../init.php';
 
 use App\Controllers\ProductController;
@@ -58,7 +60,7 @@ include __DIR__ . '/../includes/header.php';
     <div class="container">
         <h2 class="section-title text-center mb-5"><?= __('new_arrivals') ?></h2>
         <div class="row">
-            <?php foreach ($newArrivals as $product): ?>
+            <?php foreach ($newArrivals['items'] as $product): ?>
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                     <div class="product-card">
                         <a href="<?php echo BASE_URL; ?>pages/product.php?id=<?= $product['id'] ?>" class="product-link">
@@ -76,13 +78,13 @@ include __DIR__ . '/../includes/header.php';
                                 <h3 class="product-title"><?= $product['name_' . $_SESSION['lang']] ?></h3>
                                 <div class="product-price">
                                     <?php if ($product['discount_price']): ?>
-                                        <span class="old-price"><?= format_currency($product['price']) ?></span>
-                                        <span class="new-price"><?= format_currency($product['discount_price']) ?></span>
+                                        <span class="old-price"><?= format_currency($product['price'] ?? 0) ?></span>
+                                        <span class="new-price"><?= format_currency($product['discount_price'] ?? 0) ?></span>
                                         <span class="discount-badge">
                                             -<?= round((($product['price'] - $product['discount_price']) / $product['price']) * 100) ?>%
                                         </span>
                                     <?php else: ?>
-                                        <span class="price"><?= format_currency($product['price']) ?></span>
+                                        <span class="price"><?= format_currency($product['price'] ?? 0) ?></span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -104,7 +106,7 @@ include __DIR__ . '/../includes/header.php';
     <div class="container">
         <h2 class="section-title text-center mb-5"><?= __('sales') ?></h2>
         <div class="row">
-            <?php foreach ($discountedProducts as $product): ?>
+            <?php foreach ($discountedProducts['items'] as $product): ?>
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                     <div class="product-card">
                         <a href="<?php echo BASE_URL; ?>pages/product.php?id=<?= $product['id'] ?>" class="product-link">
@@ -121,8 +123,8 @@ include __DIR__ . '/../includes/header.php';
                             <div class="product-info p-3">
                                 <h3 class="product-title"><?= $product['name_' . $_SESSION['lang']] ?></h3>
                                 <div class="product-price">
-                                    <span class="old-price"><?= format_currency($product['price']) ?></span>
-                                    <span class="new-price"><?= format_currency($product['discount_price']) ?></span>
+                                    <span class="old-price"><?= format_currency($product['price'] ?? 0) ?></span>
+                                    <span class="new-price"><?= format_currency($product['discount_price'] ?? 0) ?></span>
                                     <span class="discount-badge">
                                         -<?= round((($product['price'] - $product['discount_price']) / $product['price']) * 100) ?>%
                                     </span>

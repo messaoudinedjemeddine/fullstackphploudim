@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../../init.php';
+require_once __DIR__ . '/../../init.php';
 
 use App\Auth;
 use function App\__;
@@ -60,6 +60,7 @@ switch ($action) {
                                 <?php endif; ?>
                                 
                                 <form method="POST" action="auth.php?action=login">
+                                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                                     <div class="mb-3">
                                         <label for="username" class="form-label"><?php echo __('username'); ?></label>
                                         <input type="text" class="form-control" id="username" name="username" required>

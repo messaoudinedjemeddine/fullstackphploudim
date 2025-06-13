@@ -11,14 +11,29 @@ if (isset($_SESSION['cart'])) {
 require_once __DIR__ . '/../config/app.php';
 
 // Language switcher logic
-$current_page = basename($_SERVER['PHP_SELF']);
-$current_path = $_SERVER['REQUEST_URI'];
-$query_params = parse_url($current_path, PHP_URL_QUERY);
+$current_page_name = basename($_SERVER['PHP_SELF']); // e.g., "index.php" or "product.php"
+$current_page_dir = dirname($_SERVER['PHP_SELF']); // e.g., "/loudimm/pages"
+$base_page_path = BASE_URL . trim($current_page_dir, '/') . '/' . $current_page_name;
+
+$query_params = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
 parse_str($query_params, $params);
 unset($params['lang']); // Remove existing lang param
-$english_link = BASE_URL . $current_page . '?' . http_build_query(array_merge($params, ['lang' => 'en']));
-$arabic_link = BASE_URL . $current_page . '?' . http_build_query(array_merge($params, ['lang' => 'ar']));
-$french_link = BASE_URL . $current_page . '?' . http_build_query(array_merge($params, ['lang' => 'fr']));
+
+// For English
+$english_link = $base_page_path . '?' . http_build_query(array_merge($params, ['lang' => 'en']));
+// For Arabic
+$arabic_link = $base_page_path . '?' . http_build_query(array_merge($params, ['lang' => 'ar']));
+// For French
+$french_link = $base_page_path . '?' . http_build_query(array_merge($params, ['lang' => 'fr']));
+
+$lang = $_SESSION['lang'] ?? 'en';
+try {
+    $stmt = $pdo->query("SELECT * FROM categories ORDER BY name_$lang");
+    $categories = $stmt->fetchAll();
+} catch (Exception $e) {
+    echo "<div style='color:red'>Categories query failed: " . htmlspecialchars($e->getMessage()) . "</div>";
+    $categories = [];
+}
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -45,11 +60,9 @@ $french_link = BASE_URL . $current_page . '?' . http_build_query(array_merge($pa
                     </a>
                     <ul class="dropdown-menu">
                         <?php
-                        $stmt = $pdo->query("SELECT * FROM categories ORDER BY name");
-                        $categories = $stmt->fetchAll();
                         foreach ($categories as $category):
                         ?>
-                        <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>pages/category.php?id=<?php echo $category['id']; ?>"><?php echo htmlspecialchars($category['name']); ?></a></li>
+                        <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>pages/category.php?id=<?php echo $category['id']; ?>"><?php echo htmlspecialchars($category['name_' . $lang]); ?></a></li>
                         <?php endforeach; ?>
                     </ul>
                 </li>
@@ -80,6 +93,9 @@ $french_link = BASE_URL . $current_page . '?' . http_build_query(array_merge($pa
                     <a class="nav-link" href="<?php echo BASE_URL; ?>admin/auth/login.php">
                         <i class="fas fa-user-shield"></i> Admin Login
                     </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php echo BASE_URL; ?>pages/index.php#about">About Us</a>
                 </li>
             </ul>
         </div>

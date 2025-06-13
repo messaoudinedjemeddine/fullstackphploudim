@@ -38,8 +38,7 @@ $filters = [
 // Get products for this category
 $products = $productController->getAllProducts($filters);
 
-include 'includes/header.php';
-include 'includes/navbar.php';
+include __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="container py-5">
@@ -146,4 +145,4 @@ include 'includes/navbar.php';
     <?php endif; ?>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

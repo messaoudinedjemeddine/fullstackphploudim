@@ -1,6 +1,6 @@
 <?php
-require_once 'auth.php';
-session_start();
+require_once __DIR__ . '/../../init.php';
+// session_start(); // Already started in init.php
 if (isset($_SESSION['admin_id'])) {
     header('Location: ../index.php');
     exit;
