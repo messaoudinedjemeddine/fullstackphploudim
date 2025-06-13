@@ -335,43 +335,53 @@ class OrderController {
             $stmt->bindValue(':agent_id', $agentId);
         }
         $stmt->execute();
-        $stats['orders_by_status'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $ordersByStatus = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        $stats['orders_by_status'] = $ordersByStatus ?: [
+            'pending' => 0,
+            'confirmed' => 0,
+            'delivered' => 0,
+            'cancelled' => 0
+        ];
         
-        // Revenue over time (last 30 days)
-        $sql = "SELECT DATE(created_at) as date, 
-                COUNT(*) as order_count,
+        // Monthly revenue
+        $sql = "SELECT 
+                DATE_FORMAT(created_at, '%Y-%m') as month,
                 SUM(total_amount) as revenue
                 FROM orders 
-                WHERE created_at >= DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)";
+                WHERE created_at >= DATE_SUB(CURRENT_DATE, INTERVAL 12 MONTH)
+                AND payment_status = 'paid'";
         
         if ($role === 'agent' && $agentId) {
             $sql .= " AND agent_id = :agent_id";
         }
         
-        $sql .= " GROUP BY DATE(created_at) ORDER BY date";
+        $sql .= " GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+                  ORDER BY month";
         
         $stmt = $this->pdo->prepare($sql);
         if ($role === 'agent' && $agentId) {
             $stmt->bindValue(':agent_id', $agentId);
         }
         $stmt->execute();
-        $stats['revenue_trend'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stats['revenue_monthly'] = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         
         // Top selling products
-        $sql = "SELECT p.id, p.name_en, 
-                COUNT(oi.id) as order_count,
-                SUM(oi.quantity) as total_quantity
+        $sql = "SELECT 
+                p.name_en as name,
+                SUM(oi.quantity) as quantity_sold,
+                SUM(oi.quantity * oi.price_at_order) as total_revenue
                 FROM order_items oi
                 JOIN products p ON oi.product_id = p.id
                 JOIN orders o ON oi.order_id = o.id
-                WHERE o.created_at >= DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)";
+                WHERE o.created_at >= DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)
+                AND o.order_status != 'cancelled'";
         
         if ($role === 'agent' && $agentId) {
             $sql .= " AND o.agent_id = :agent_id";
         }
         
         $sql .= " GROUP BY p.id, p.name_en
-                  ORDER BY total_quantity DESC
+                  ORDER BY quantity_sold DESC
                   LIMIT 10";
         
         $stmt = $this->pdo->prepare($sql);
@@ -379,7 +389,7 @@ class OrderController {
             $stmt->bindValue(':agent_id', $agentId);
         }
         $stmt->execute();
-        $stats['top_products'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stats['top_selling_products'] = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         
         return $stats;
     }

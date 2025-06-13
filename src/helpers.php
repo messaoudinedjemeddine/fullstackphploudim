@@ -450,16 +450,7 @@ function csrf_check(string $token): bool {
     return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
 }
 
-/**
- * Redirect to a URL
- * 
- * @param string $url
- * @return void
- */
-function redirect(string $url): void {
-    header("Location: " . BASE_URL . ltrim($url, '/'));
-    exit;
-}
+
 
 /**
  * Get current URL

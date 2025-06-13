@@ -23,7 +23,7 @@ require_once __DIR__ . '/src/helpers.php';
 
 // Initialize database connection
 try {
-    $db = new \App\Database(DB_HOST, DB_NAME, DB_USER, DB_PASS);
+    $db = \App\Database::getInstance();
     $GLOBALS['pdo'] = $db->getConnection();
 } catch (\Exception $e) {
     error_log("Database Connection Error: " . $e->getMessage());
@@ -70,7 +70,22 @@ if (!isset($_SESSION['csrf_token'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!isset($_POST['csrf_token']) || !\App\csrf_check($_POST['csrf_token'])) {
+    // Skip CSRF validation for authentication endpoints
+    $current_script = $_SERVER['SCRIPT_NAME'];
+    $skip_csrf_paths = [
+        '/admin/auth/auth.php',
+        '/admin/auth/login.php'
+    ];
+    
+    $skip_csrf = false;
+    foreach ($skip_csrf_paths as $path) {
+        if (strpos($current_script, $path) !== false) {
+            $skip_csrf = true;
+            break;
+        }
+    }
+    
+    if (!$skip_csrf && (!isset($_POST['csrf_token']) || !\App\csrf_check($_POST['csrf_token']))) {
         die('CSRF token validation failed');
     }
 }
@@ -144,8 +159,9 @@ if (file_exists($lang_file)) {
  * Redirect to a URL
  */
 function redirect($url, $permanent = false) {
+    $location = BASE_URL . ltrim($url, '/');
     $status_code = $permanent ? 301 : 302;
-    header("Location: $url", true, $status_code);
+    header('Location: ' . $location, true, $status_code);
     exit;
 }
 

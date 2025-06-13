@@ -22,45 +22,11 @@ class ProductController {
     }
     
     // Product Methods
-    public function getAllProducts(array $filters = [], int $limit = 12, int $offset = 0): array {
-        // First, get total count for pagination
-        $countSql = "SELECT COUNT(*) FROM products p WHERE p.is_active = 1";
-        $countParams = [];
-        
-        if (!empty($filters['category_id'])) {
-            $countSql .= " AND p.category_id = :category_id";
-            $countParams[':category_id'] = $filters['category_id'];
-        }
-        
-        if (!empty($filters['search'])) {
-            $countSql .= " AND (p.name_en LIKE :search OR p.name_fr LIKE :search OR p.name_ar LIKE :search 
-                     OR p.description_en LIKE :search OR p.description_fr LIKE :search OR p.description_ar LIKE :search)";
-            $countParams[':search'] = "%{$filters['search']}%";
-        }
-        
-        if (isset($filters['on_sale']) && $filters['on_sale']) {
-            $countSql .= " AND p.discount_price IS NOT NULL AND p.discount_price < p.price";
-        }
-        
-        $stmt = $this->pdo->prepare($countSql);
-        foreach ($countParams as $key => $value) {
-            $stmt->bindValue($key, $value);
-        }
-        $stmt->execute();
-        $totalItems = $stmt->fetchColumn();
-        
-        // Calculate pagination
-        $perPage = $filters['per_page'] ?? 12;
-        $currentPage = $filters['page'] ?? 1;
-        $totalPages = ceil($totalItems / $perPage);
-        $offset = ($currentPage - 1) * $perPage;
-        
-        // Get products
-        $sql = "SELECT p.*, 
-                (SELECT pi.image_path FROM product_images pi WHERE pi.product_id = p.id AND pi.is_primary = 1 LIMIT 1) as primary_image,
-                (SELECT SUM(ps.quantity) FROM product_sizes ps WHERE ps.product_id = p.id) as total_quantity
-                FROM products p
-                WHERE p.is_active = 1";
+    public function getAllProducts(array $filters = []): array {
+        $sql = "SELECT p.*, c.name_en as category_name 
+                FROM products p 
+                LEFT JOIN categories c ON p.category_id = c.id 
+                WHERE 1=1";
         
         $params = [];
         
@@ -70,49 +36,18 @@ class ProductController {
         }
         
         if (!empty($filters['search'])) {
-            $sql .= " AND (p.name_en LIKE :search OR p.name_fr LIKE :search OR p.name_ar LIKE :search 
-                     OR p.description_en LIKE :search OR p.description_fr LIKE :search OR p.description_ar LIKE :search)";
+            $sql .= " AND (p.name_en LIKE :search OR p.name_fr LIKE :search OR p.name_ar LIKE :search)";
             $params[':search'] = "%{$filters['search']}%";
         }
         
-        if (isset($filters['on_sale']) && $filters['on_sale']) {
-            $sql .= " AND p.discount_price IS NOT NULL AND p.discount_price < p.price";
-        }
-        
-        if (isset($filters['out_of_stock']) && $filters['out_of_stock']) {
-            $sql .= " HAVING total_quantity = 0";
-        }
-        
-        $sql .= " ORDER BY p.created_at DESC LIMIT $perPage OFFSET $offset";
+        $sql .= " ORDER BY p.id DESC";
         
         $stmt = $this->pdo->prepare($sql);
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value);
         }
         $stmt->execute();
-        
-        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // Format images data consistently
-        foreach ($products as &$product) {
-            if ($product['primary_image']) {
-                $product['images'] = [[
-                    'path' => $product['primary_image'],
-                    'is_primary' => true
-                ]];
-            } else {
-                $product['images'] = [];
-            }
-            unset($product['primary_image']);
-        }
-        
-        return [
-            'items' => $products,
-            'total_items' => $totalItems,
-            'total_pages' => $totalPages,
-            'current_page' => $currentPage,
-            'per_page' => $perPage
-        ];
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     public function getProductById(int $productId): ?array {
