@@ -1,0 +1,466 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
+
+/* --- Global CSS Variables (Color Palette) --- */
+:root {
+    --color-light-beige: #DED8D3;
+    --color-off-white: #EAE3DD;
+    --color-warm-tan: #BDA594;
+    --color-deep-tan: #A28D7C;
+    --color-dark-charcoal: #2C2C2C;
+    --color-peach-blush: #F5D6C5; /* Used for subtle warmth */
+    --color-soft-gold: #C8B29C; /* Used for subtle highlights */
+
+    /* Bootstrap Overrides (Optional, adjust as needed) */
+    --bs-primary: var(--color-warm-tan);
+    --bs-secondary: #6c757d;
+    --bs-success: #198754;
+    --bs-info: #0dcaf0;
+    --bs-warning: #ffc107;
+    --bs-danger: #dc3545;
+    --bs-light: var(--color-off-white);
+    --bs-dark: var(--color-dark-charcoal);
+}
+
+/* --- Global Base Styles --- */
+html {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    /* cursor: none; */ /* Hide default cursor */
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+body {
+    font-family: 'Inter', 'Roboto', 'Open Sans', sans-serif; /* You'll need to import this font from Google Fonts */
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    color: var(--color-dark-charcoal);
+    background-color: var(--color-off-white);
+    overflow-x: hidden; /* Prevent horizontal scroll from animations */
+}
+
+/* Import Google Fonts (example - choose your desired font) */
+/* @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap'); */
+
+a {
+    color: var(--color-warm-tan);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--color-deep-tan);
+}
+
+/* --- Navbar Styles --- */
+.navbar {
+    background-color: var(--color-off-white);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.navbar .navbar-brand {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    /* For smaller screens, adjust centering or revert */
+}
+@media (max-width: 991.98px) { /* Bootstrap's lg breakpoint */
+    .navbar .navbar-brand {
+        position: static;
+        transform: none;
+        margin-right: 0;
+    }
+}
+
+.navbar-nav .nav-link {
+    color: var(--color-dark-charcoal);
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--color-warm-tan);
+}
+
+/* Language Switcher */
+.lang-switcher .nav-link {
+    padding: 0.5rem;
+    font-size: 0.85em;
+    opacity: 0.7;
+}
+.lang-switcher .nav-link:hover {
+    opacity: 1;
+}
+
+
+/* --- Hero Section --- */
+.hero-section {
+    position: relative;
+    width: 100%;
+    height: 80vh; /* Adjust height as needed */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+}
+
+.hero-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: 0;
+    transform: translateX(-50%) translateY(-50%);
+    background-size: cover;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(to bottom, rgba(44, 44, 44, 0.6), rgba(44, 44, 44, 0.2));
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-text h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.hero-text p {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin-bottom: 2rem;
+}
+
+/* Hero Text Animation */
+.hero-animated-text {
+    opacity: 0;
+    animation: fadeInOut 8s infinite ease-in-out; /* Adjust timing */
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(20px); }
+    20% { opacity: 1; transform: translateY(0); }
+80% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-20px); }
+}
+
+
+/* --- Section Animations (Alpine.js x-transition helper classes) --- */
+/* These are general styles for slide-up fade-in, Alpine.js will apply/remove them */
+.slide-up-fade-in-enter-active {
+    transition: all 1s ease-out;
+}
+.slide-up-fade-in-enter-from {
+    opacity: 0;
+    transform: translateY(50px);
+}
+.slide-up-fade-in-enter-to {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* --- Product Cards --- */
+.product-card {
+    border: 1px solid var(--color-light-beige);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: white;
+    position: relative; /* For badges */
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.product-card img {
+    width: 100%;
+    height: 250px; /* Fixed height for consistency */
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover img {
+    transform: scale(1.05); /* Slight zoom on hover */
+}
+
+.product-card .card-body {
+    padding: 1rem;
+}
+
+.product-card .card-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--color-dark-charcoal);
+    height: 3em; /* Limit title height */
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.product-card .product-prices {
+    margin-bottom: 0.5rem;
+}
+
+.product-card .old-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.9em;
+    margin-right: 0.5rem;
+}
+
+.product-card .new-price {
+    color: var(--color-warm-tan);
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+/* Product Badges (Reduction, Out of Stock) */
+.product-badge {
+    position: absolute;
+    padding: 0.3em 0.6em;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+    z-index: 10;
+}
+
+.reduction-badge {
+    top: 10px;
+    left: 10px;
+    background-color: var(--color-deep-tan);
+    color: white;
+}
+
+.out-of-stock-badge {
+    top: 10px;
+    right: 10px;
+    background-color: var(--bs-secondary); /* Grey */
+    color: white;
+}
+
+/* Out of Stock Overlay */
+.product-card.out-of-stock img {
+    filter: grayscale(80%) brightness(80%);
+}
+
+.product-card.out-of-stock .product-image::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    z-index: 5;
+    pointer-events: none;
+}
+
+/* Hover effect to show elements */
+.product-card .product-actions {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    margin-top: 0.5rem;
+}
+
+.product-card:hover .product-actions {
+    opacity: 1;
+}
+
+/* Sizes display on hover (if not using separate button for sizes) */
+.product-card .available-sizes {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255,255,255,0.9);
+    padding: 0.5rem;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    font-size: 0.85em;
+}
+
+.product-card:hover .available-sizes {
+    transform: translateY(0);
+    opacity: 1;
+}
+.available-sizes span {
+    border: 1px solid var(--color-light-beige);
+    padding: 0.2em 0.5em;
+    border-radius: 3px;
+    background-color: var(--color-off-white);
+}
+
+/* --- Size Selection Buttons --- */
+.product-sizing-info .btn {
+    min-width: 50px;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9em;
+    border: 1px solid var(--color-deep-tan);
+    color: var(--color-dark-charcoal);
+    background-color: var(--color-off-white);
+}
+.product-sizing-info .btn.active {
+    background-color: var(--color-warm-tan);
+    color: white;
+    border-color: var(--color-warm-tan);
+}
+.product-sizing-info .btn.out-of-stock-size {
+    cursor: not-allowed;
+    opacity: 0.6;
+    text-decoration: line-through;
+    color: #6c757d !important;
+    border-color: #6c757d !important;
+}
+
+/* --- Tables --- */
+.table-responsive .table {
+    font-size: 0.9em;
+}
+.table-responsive .table thead {
+    background-color: var(--color-dark-charcoal);
+    color: white;
+}
+.table-responsive .table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--color-light-beige);
+}
+.table-responsive .table tbody tr:hover {
+    background-color: var(--color-peach-blush); /* Subtle hover */
+}
+
+
+/* --- Custom Cursor --- */
+/* Hide the default cursor for the whole body */
+html, body {
+    cursor: none;
+}
+
+/* Styles for the inner dot cursor */
+.custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 8px; /* Size of the inner dot */
+    height: 8px;
+    background-color: var(--color-warm-tan); /* Your primary accent color */
+    border-radius: 50%;
+    pointer-events: none; /* Crucial: allows clicks on elements beneath */
+    z-index: 9999; /* Ensure it's on top of everything */
+    transform: translate(-50%, -50%); /* Center the cursor */
+    transition: transform 0.2s ease-out, background-color 0.2s ease-out; /* Smooth movement and color change */
+}
+
+/* Styles for the outer outline cursor */
+.custom-cursor-outline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 30px; /* Size of the outer ring */
+    height: 30px;
+    border: 1px solid var(--color-warm-tan); /* Border color matching inner dot */
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998; /* Just below the inner dot */
+    transform: translate(-50%, -50%); /* Center the cursor */
+    transition: transform 0.15s ease-out, border-color 0.2s ease-out; /* Slower transition for trailing effect */
+}
+
+/* Hover states for the custom cursor */
+.custom-cursor.hovered {
+    transform: translate(-50%, -50%) scale(0.5); /* Shrink the inner dot */
+    background-color: var(--color-dark-charcoal); /* Change inner dot color on hover */
+}
+
+.custom-cursor-outline.hovered {
+    transform: translate(-50%, -50%) scale(1.5); /* Enlarge the outer ring */
+    border-color: var(--color-dark-charcoal); /* Change outer ring border color on hover */
+}
+
+/* Hide custom cursor on mobile */
+@media (max-width: 768px) {
+    .custom-cursor,
+    .custom-cursor-outline {
+        display: none;
+    }
+    html, body {
+        cursor: auto; /* Revert to default cursor on mobile */
+    }
+}
+
+/* --- RTL (Right-to-Left) Support for Arabic --- */
+[dir="rtl"] body {
+    text-align: right; /* Default text alignment for RTL */
+}
+
+[dir="rtl"] .navbar .navbar-brand {
+    left: auto;
+    right: 50%;
+    transform: translateX(50%);
+}
+@media (max-width: 991.98px) {
+    [dir="rtl"] .navbar .navbar-brand {
+        right: auto;
+        transform: none;
+    }
+}
+
+[dir="rtl"] .navbar-nav {
+    padding-right: 0; /* Adjust padding for RTL nav-items */
+    padding-left: 0;
+}
+
+[dir="rtl"] .hero-text {
+    direction: rtl; /* Ensure text is right-to-left within hero */
+}
+
+[dir="rtl"] .product-badge.reduction-badge {
+    left: auto;
+    right: 10px;
+}
+
+[dir="rtl"] .product-badge.out-of-stock-badge {
+    right: auto;
+    left: 10px;
+}
+
+/* Adjust Bootstrap's default LTR margins/paddings for RTL if needed */
+/* Example for Bootstrap grid columns: */
+[dir="rtl"] .g-3,
+[dir="rtl"] .gx-3 {
+    --bs-gutter-x: 1rem;
+    margin-right: calc(-.5 * var(--bs-gutter-x));
+    margin-left: 0;
+}
+
+[dir="rtl"] .g-3 > .col,
+[dir="rtl"] .g-3 > [class^="col-"] {
+    padding-right: calc(var(--bs-gutter-x) * .5);
+    padding-left: calc(var(--bs-gutter-x) * .5);
+}
+
+/* Filters/Sidebars if float/flex based for RTL */
+[dir="rtl"] .sidebar {
+    float: right;
+}

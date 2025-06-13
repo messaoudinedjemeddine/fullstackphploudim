@@ -1,0 +1,55 @@
+{
+    "name": "loudream/ecommerce-project",
+    "description": "Full-stack E-commerce Website with PHP and MySQL",
+    "type": "project",
+    "keywords": ["ecommerce", "php", "mysql", "bootstrap", "admin"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Loudream",
+            "email": "contact@loudream.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-gd": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-session": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+            "App\\Controllers\\": "src/controllers/",
+            "App\\Models\\": "src/models/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "install-db": "mysql -u root -p < ecommerce_db.sql",
+        "seed-db": "mysql -u root -p ecommerce_db < ecommerce_db_seed_data.sql",
+        "setup": [
+            "@install-db",
+            "@seed-db"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
